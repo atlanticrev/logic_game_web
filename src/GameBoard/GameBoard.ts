@@ -25,6 +25,8 @@ export default class GameBoard extends HTMLElement {
 
         this.attachShadow({ mode: 'open' });
 
+        this.onMouseMove = this.onMouseMove.bind(this);
+
         const style = document.createElement('style');
         style.textContent = styles;
 
@@ -220,8 +222,26 @@ export default class GameBoard extends HTMLElement {
         this.shadowRoot!.append(style, this.canvas);
     }
 
+    onMouseMove(e: MouseEvent) {
+        const { offsetX, offsetY } = e;
+
+        for (let region of Object.values(this.regions)) {
+            for (let [regionDirection, regionType] of Object.entries(region)) {
+                if (this.ctx.isPointInPath(regionType.dropRegion, offsetX, offsetY)) {
+                    console.log(regionDirection);
+                }
+            }
+        }
+    }
+
     connectedCallback() {
         this.draw();
+
+        document.addEventListener('mousemove', this.onMouseMove);
+    }
+
+    disconnectedCallback() {
+        document.removeEventListener('mousemove', this.onMouseMove);
     }
 
     draw() {
@@ -264,6 +284,7 @@ export default class GameBoard extends HTMLElement {
             '#3DDC84',
             '#00FFFF',
         ];
+
         const usedColors = new Set();
 
         for (let regionType of Object.values(this.regions.big)) {
