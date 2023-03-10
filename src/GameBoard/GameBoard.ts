@@ -1,17 +1,9 @@
-import styles from './styles.css?inline'
-import Point2 from "./Point2";
-import {randIndex} from "../utils";
+import styles from './styles.css?inline';
+import Point2 from './Point2';
+import { randIndex } from '../utils';
+import type { TRegionConfig, TRegionDirection, TRegionSize } from './types';
 
 const CANVAS_SIZE = 600;
-
-type TRegionSize = 'big' | 'small';
-
-type TRegionDirection = 'N' | 'W' | 'S' | 'E' | 'NW' | 'NE' | 'SE' | 'SW';
-
-type TRegionConfig = {
-    checkerCoordinate: Point2;
-    dropRegion: Path2D;
-};
 
 export default class GameBoard extends HTMLElement {
     canvas: HTMLCanvasElement;
@@ -26,7 +18,7 @@ export default class GameBoard extends HTMLElement {
 
     checkerSize: number;
 
-    regions: Record<TRegionSize, Record<TRegionDirection, TRegionConfig>>
+    regions: Record<TRegionSize, Record<TRegionDirection, TRegionConfig>>;
 
     constructor() {
         super();
@@ -34,7 +26,7 @@ export default class GameBoard extends HTMLElement {
         this.attachShadow({ mode: 'open' });
 
         const style = document.createElement('style');
-        style.textContent = styles
+        style.textContent = styles;
 
         this.canvas = document.createElement('canvas');
         this.canvas.width = CANVAS_SIZE;
@@ -55,7 +47,7 @@ export default class GameBoard extends HTMLElement {
                 W: {
                     checkerCoordinate: Point2.create(
                         this.center.x - this.bigFieldRectSize * 0.5 + this.smallFieldRectSize * 0.25,
-                        this.center.y
+                        this.center.y,
                     ),
                     dropRegion: new Path2D(`
                         M ${this.center.x - this.smallFieldRectSize * 0.5} ${this.center.y - this.checkerSize}
@@ -63,12 +55,12 @@ export default class GameBoard extends HTMLElement {
                         v ${this.checkerSize * 2}
                         h ${unitBlockSize}
                         Z
-                    `)
+                    `),
                 },
                 N: {
                     checkerCoordinate: Point2.create(
                         this.center.x,
-                        this.center.y - this.bigFieldRectSize * 0.5 + this.smallFieldRectSize * 0.25
+                        this.center.y - this.bigFieldRectSize * 0.5 + this.smallFieldRectSize * 0.25,
                     ),
                     dropRegion: new Path2D(`
                         M ${this.center.x - this.checkerSize} ${this.center.y - unitBlockSize}
@@ -76,12 +68,12 @@ export default class GameBoard extends HTMLElement {
                         h ${this.checkerSize * 2}
                         v ${unitBlockSize}
                         Z
-                    `)
+                    `),
                 },
                 S: {
                     checkerCoordinate: Point2.create(
                         this.center.x + this.bigFieldRectSize * 0.5 - this.smallFieldRectSize * 0.25,
-                        this.center.y
+                        this.center.y,
                     ),
                     dropRegion: new Path2D(`
                         M ${this.center.x + this.smallFieldRectSize * 0.5} ${this.center.y - this.checkerSize}
@@ -89,12 +81,12 @@ export default class GameBoard extends HTMLElement {
                         v ${this.checkerSize * 2}
                         h ${-unitBlockSize}
                         Z
-                    `)
+                    `),
                 },
                 E: {
                     checkerCoordinate: Point2.create(
                         this.center.x,
-                        this.center.y + this.bigFieldRectSize * 0.5 - this.smallFieldRectSize * 0.25
+                        this.center.y + this.bigFieldRectSize * 0.5 - this.smallFieldRectSize * 0.25,
                     ),
                     dropRegion: new Path2D(`
                         M ${this.center.x - this.checkerSize} ${this.center.y + unitBlockSize}
@@ -102,127 +94,127 @@ export default class GameBoard extends HTMLElement {
                         h ${this.checkerSize * 2}
                         v ${-unitBlockSize}
                         Z
-                    `)
+                    `),
                 },
                 NW: {
                     checkerCoordinate: Point2.create(
                         this.center.x - this.bigFieldRectSize * 0.5 + this.smallFieldRectSize * 0.25,
-                        this.center.y - this.bigFieldRectSize * 0.5 + this.smallFieldRectSize * 0.25
+                        this.center.y - this.bigFieldRectSize * 0.5 + this.smallFieldRectSize * 0.25,
                     ),
                     dropRegion: new Path2D(`
                         M ${this.center.x - unitBlockSize} ${this.center.y - this.checkerSize}
                         v ${-(unitBlockSize - this.checkerSize)}
-                        h ${(unitBlockSize - this.checkerSize)}
+                        h ${unitBlockSize - this.checkerSize}
                         v ${-unitBlockSize}
                         h ${-(unitBlockSize * 2 - this.checkerSize)}
-                        v ${(unitBlockSize * 2 - this.checkerSize)}
+                        v ${unitBlockSize * 2 - this.checkerSize}
                         Z
-                    `)
+                    `),
                 },
                 NE: {
                     checkerCoordinate: Point2.create(
                         this.center.x + this.bigFieldRectSize * 0.5 - this.smallFieldRectSize * 0.25,
-                        this.center.y - this.bigFieldRectSize * 0.5 + this.smallFieldRectSize * 0.25
+                        this.center.y - this.bigFieldRectSize * 0.5 + this.smallFieldRectSize * 0.25,
                     ),
                     dropRegion: new Path2D(`
                         M ${this.center.x + unitBlockSize} ${this.center.y - this.checkerSize}
                         v ${-(unitBlockSize - this.checkerSize)}
                         h ${-(unitBlockSize - this.checkerSize)}
                         v ${-unitBlockSize}
-                        h ${(unitBlockSize * 2 - this.checkerSize)}
-                        v ${(unitBlockSize * 2 - this.checkerSize)}
+                        h ${unitBlockSize * 2 - this.checkerSize}
+                        v ${unitBlockSize * 2 - this.checkerSize}
                         Z
-                    `)
+                    `),
                 },
                 SE: {
                     checkerCoordinate: Point2.create(
                         this.center.x + this.bigFieldRectSize * 0.5 - this.smallFieldRectSize * 0.25,
-                        this.center.y + this.bigFieldRectSize * 0.5 - this.smallFieldRectSize * 0.25
+                        this.center.y + this.bigFieldRectSize * 0.5 - this.smallFieldRectSize * 0.25,
                     ),
                     dropRegion: new Path2D(`
                         M ${this.center.x + unitBlockSize} ${this.center.y + this.checkerSize}
-                        v ${(unitBlockSize - this.checkerSize)}
+                        v ${unitBlockSize - this.checkerSize}
                         h ${-(unitBlockSize - this.checkerSize)}
                         v ${unitBlockSize}
-                        h ${(unitBlockSize * 2 - this.checkerSize)}
+                        h ${unitBlockSize * 2 - this.checkerSize}
                         v ${-(unitBlockSize * 2 - this.checkerSize)}
                         Z
-                    `)
+                    `),
                 },
                 SW: {
                     checkerCoordinate: Point2.create(
                         this.center.x - this.bigFieldRectSize * 0.5 + this.smallFieldRectSize * 0.25,
-                        this.center.y + this.bigFieldRectSize * 0.5 - this.smallFieldRectSize * 0.25
+                        this.center.y + this.bigFieldRectSize * 0.5 - this.smallFieldRectSize * 0.25,
                     ),
                     dropRegion: new Path2D(`
                         M ${this.center.x - unitBlockSize} ${this.center.y + this.checkerSize}
-                        v ${(unitBlockSize - this.checkerSize)}
-                        h ${(unitBlockSize - this.checkerSize)}
+                        v ${unitBlockSize - this.checkerSize}
+                        h ${unitBlockSize - this.checkerSize}
                         v ${unitBlockSize}
                         h ${-(unitBlockSize * 2 - this.checkerSize)}
                         v ${-(unitBlockSize * 2 - this.checkerSize)}
                         Z
-                    `)
-                }
+                    `),
+                },
             },
             small: {
                 W: {
                     checkerCoordinate: Point2.create(
                         this.center.x - this.smallFieldRectSize * 0.5 + this.smallFieldRectSize * 0.25,
-                        this.center.y
+                        this.center.y,
                     ),
-                    dropRegion: new Path2D()
+                    dropRegion: new Path2D(),
                 },
                 N: {
                     checkerCoordinate: Point2.create(
                         this.center.x,
-                        this.center.y - this.smallFieldRectSize * 0.5 + this.smallFieldRectSize * 0.25
+                        this.center.y - this.smallFieldRectSize * 0.5 + this.smallFieldRectSize * 0.25,
                     ),
-                    dropRegion: new Path2D()
+                    dropRegion: new Path2D(),
                 },
                 E: {
                     checkerCoordinate: Point2.create(
                         this.center.x + this.smallFieldRectSize * 0.5 - this.smallFieldRectSize * 0.25,
-                        this.center.y
+                        this.center.y,
                     ),
-                    dropRegion: new Path2D()
+                    dropRegion: new Path2D(),
                 },
                 S: {
                     checkerCoordinate: Point2.create(
                         this.center.x,
-                        this.center.y + this.smallFieldRectSize * 0.5 - this.smallFieldRectSize * 0.25
+                        this.center.y + this.smallFieldRectSize * 0.5 - this.smallFieldRectSize * 0.25,
                     ),
-                    dropRegion: new Path2D()
+                    dropRegion: new Path2D(),
                 },
                 NW: {
                     checkerCoordinate: Point2.create(
                         this.center.x - this.smallFieldRectSize * 0.5 + this.smallFieldRectSize * 0.25,
-                        this.center.y - this.smallFieldRectSize * 0.5 + this.smallFieldRectSize * 0.25
+                        this.center.y - this.smallFieldRectSize * 0.5 + this.smallFieldRectSize * 0.25,
                     ),
-                    dropRegion: new Path2D()
+                    dropRegion: new Path2D(),
                 },
                 NE: {
                     checkerCoordinate: Point2.create(
                         this.center.x + this.smallFieldRectSize * 0.5 - this.smallFieldRectSize * 0.25,
-                        this.center.y - this.smallFieldRectSize * 0.5 + this.smallFieldRectSize * 0.25
+                        this.center.y - this.smallFieldRectSize * 0.5 + this.smallFieldRectSize * 0.25,
                     ),
-                    dropRegion: new Path2D()
+                    dropRegion: new Path2D(),
                 },
                 SE: {
                     checkerCoordinate: Point2.create(
                         this.center.x + this.smallFieldRectSize * 0.5 - this.smallFieldRectSize * 0.25,
-                        this.center.y + this.smallFieldRectSize * 0.5 - this.smallFieldRectSize * 0.25
+                        this.center.y + this.smallFieldRectSize * 0.5 - this.smallFieldRectSize * 0.25,
                     ),
-                    dropRegion: new Path2D()
+                    dropRegion: new Path2D(),
                 },
                 SW: {
                     checkerCoordinate: Point2.create(
                         this.center.x - this.smallFieldRectSize * 0.5 + this.smallFieldRectSize * 0.25,
-                        this.center.y + this.smallFieldRectSize * 0.5 - this.smallFieldRectSize * 0.25
+                        this.center.y + this.smallFieldRectSize * 0.5 - this.smallFieldRectSize * 0.25,
                     ),
-                    dropRegion: new Path2D()
+                    dropRegion: new Path2D(),
                 },
-            }
+            },
         };
 
         this.shadowRoot!.append(style, this.canvas);
@@ -239,33 +231,39 @@ export default class GameBoard extends HTMLElement {
     }
 
     drawField() {
-        this.drawRectAtCenter(
-            this.ctx,
-            { width: this.bigFieldRectSize, height: this.bigFieldRectSize },
-            this.center
-        );
+        this.drawRectAtCenter(this.ctx, { width: this.bigFieldRectSize, height: this.bigFieldRectSize }, this.center);
 
         this.drawRectAtCenter(
             this.ctx,
             { width: this.smallFieldRectSize, height: this.smallFieldRectSize },
-            this.center
+            this.center,
         );
 
         this.drawLine(
             this.ctx,
-            Point2.create(this.center.x , this.center.y - this.bigFieldRectSize * 0.5),
-            Point2.create(this.center.x , this.center.y + this.bigFieldRectSize * 0.5)
+            Point2.create(this.center.x, this.center.y - this.bigFieldRectSize * 0.5),
+            Point2.create(this.center.x, this.center.y + this.bigFieldRectSize * 0.5),
         );
 
         this.drawLine(
             this.ctx,
             Point2.create(this.center.x - this.bigFieldRectSize * 0.5, this.center.y),
-            Point2.create(this.center.y + this.bigFieldRectSize * 0.5 , this.center.y)
+            Point2.create(this.center.y + this.bigFieldRectSize * 0.5, this.center.y),
         );
     }
 
     drawRegion() {
-        const colors = ['#0048BA', '#B0BF1A', '#7CB9E8', '#B284BE', '#DB2D43', '#FFBF00', '#3B7A57', '#3DDC84', '#00FFFF'];
+        const colors = [
+            '#0048BA',
+            '#B0BF1A',
+            '#7CB9E8',
+            '#B284BE',
+            '#DB2D43',
+            '#FFBF00',
+            '#3B7A57',
+            '#3DDC84',
+            '#00FFFF',
+        ];
         const usedColors = new Set();
 
         for (let regionType of Object.values(this.regions.big)) {
@@ -273,6 +271,7 @@ export default class GameBoard extends HTMLElement {
                 return;
             }
 
+            // todo recheck
             let color = colors[randIndex(colors)];
             while (usedColors.has(color)) {
                 if (usedColors.size >= colors.length) {
@@ -283,8 +282,6 @@ export default class GameBoard extends HTMLElement {
             }
 
             usedColors.add(color);
-
-            console.log(usedColors);
 
             this.ctx.fillStyle = color;
             this.ctx.globalAlpha = 0.75;
@@ -341,20 +338,15 @@ export default class GameBoard extends HTMLElement {
 
     drawRectAtCenter(
         ctx: CanvasRenderingContext2D,
-        { width, height }: { width: number, height: number },
-        { x, y }: Point2
+        { width, height }: { width: number; height: number },
+        { x, y }: Point2,
     ) {
         ctx.beginPath();
 
         const startX = x - width * 0.5;
         const startY = y - height * 0.5;
 
-        ctx.rect(
-            startX,
-            startY,
-            width,
-            height
-        );
+        ctx.rect(startX, startY, width, height);
 
         ctx.lineWidth = 1;
         ctx.stroke();
@@ -362,11 +354,7 @@ export default class GameBoard extends HTMLElement {
         ctx.closePath();
     }
 
-    drawCircleAtPoint(
-        ctx: CanvasRenderingContext2D,
-        point: Point2,
-        radius: number = 10
-    ) {
+    drawCircleAtPoint(ctx: CanvasRenderingContext2D, point: Point2, radius: number = 10) {
         ctx.beginPath();
 
         ctx.arc(point.x, point.y, radius, 0, Math.PI * 2, false);

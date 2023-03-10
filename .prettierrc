@@ -1,0 +1,21 @@
+{
+  "singleQuote": true,
+  "tabWidth": 4,
+  "printWidth": 120,
+  "semicolons": true,
+  "trailingComma": "all",
+  "bracketSpacing": true,
+  "jsxBracketSameLine": false,
+  "overrides": [
+    {
+      "files": [
+        ".*rc",
+        "*.json"
+      ],
+      "options": {
+        "printWidth": 240,
+        "tabWidth": 4
+      }
+    }
+  ]
+}

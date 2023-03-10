@@ -1,3 +1,3 @@
-import GameBoard from "./GameBoard";
+import GameBoard from './GameBoard';
 
 export { GameBoard };
