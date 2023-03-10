@@ -1,0 +1,11 @@
+:host {
+    display: block;
+}
+
+:host > canvas {
+    --size: 500px;
+    width: var(--size);
+    height: var(--size);
+    background-color: lightgray;
+    border: 0;
+}
