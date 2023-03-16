@@ -1,0 +1,54 @@
+:host {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+
+:host > button {
+    width: 100px;
+    height: 32px;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: black;
+    padding: 5px 10px;
+    background-color: lightgray;
+    border: 1px solid gray;
+    border-radius: 4px;
+}
+
+:host > button:hover {
+    background-color: #E0E0E0;
+    cursor: pointer;
+}
+
+:host .checker-icon {
+    --size: 20px;
+
+    display: inline-block;
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+}
+
+:host .checker-icon__some {
+    background-color: red;
+}
+
+:host .checker-icon__empty {
+ background-color: black;
+}
+
+:host .active-checker-display {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+}

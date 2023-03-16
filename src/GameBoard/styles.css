@@ -1,11 +1,15 @@
 :host {
     display: block;
+    position: relative;
+    top: 0;
+    left: 0;
 }
 
 :host > canvas {
     --size: 0;
+
     width: var(--size);
     height: var(--size);
-    background-color: lightgray;
+    background-color: #E0E0E0;
     border: 0;
 }

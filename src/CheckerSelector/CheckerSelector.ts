@@ -1,10 +1,10 @@
 import styles from './styles.css?inline';
-import Point2 from '../GameBoard/Point2';
 
 export default class CheckerSelector extends HTMLElement {
-    canvas: HTMLCanvasElement;
 
-    ctx: CanvasRenderingContext2D;
+    static get observedAttributes() {
+        return ['active-checker'];
+    }
 
     constructor() {
         super();
@@ -12,93 +12,76 @@ export default class CheckerSelector extends HTMLElement {
         this.attachShadow({ mode: 'open' });
 
         this.onMouseDown = this.onMouseDown.bind(this);
+        this.onKeyDown = this.onKeyDown.bind(this);
 
         const style = document.createElement('style');
         style.textContent = styles;
 
-        this.canvas = document.createElement('canvas');
+        const template = document.createElement('div');
+        template.innerHTML = `
+            <button class='btn-some'>
+                <span>Some</span>
+                <span class='checker-icon checker-icon__some'></span>
+            </button>
+            
+            <button class='btn-empty'>
+                <span>Empty</span>
+                <span class='checker-icon checker-icon__empty'></span>
+            </button>
+            
+            <div class="active-checker-display">
+                <span>Active: </span>
+                <span class='checker-icon'></span>
+            </div>
+        `;
 
-        let CANVAS_SIZE;
-        if (window.innerWidth < 400) {
-            CANVAS_SIZE = 320;
-            this.canvas.style.setProperty('--size', `${CANVAS_SIZE}px`);
-            this.canvas.width = CANVAS_SIZE;
-            this.canvas.height = CANVAS_SIZE;
-        } else {
-            CANVAS_SIZE = 700;
-            this.canvas.style.setProperty('--size', `${CANVAS_SIZE}px`);
-            this.canvas.width = CANVAS_SIZE;
-            this.canvas.height = CANVAS_SIZE;
-        }
-
-        this.ctx = this.canvas.getContext('2d')!;
-
-        this.shadowRoot!.append(style, this.canvas);
+        this.shadowRoot!.append(style, ...Array.from(template.children));
     }
 
-    onMouseDown(e: MouseEvent) {
-        const { offsetX, offsetY } = e;
+    onMouseDown() {
+        const btnSome = this.shadowRoot!.querySelector('.btn-some') as HTMLButtonElement;
+        const btnEmpty = this.shadowRoot!.querySelector('.btn-empty') as HTMLButtonElement;
 
+        const self = this;
 
+        btnSome.addEventListener('click', () => {
+            self.dispatchEvent(new CustomEvent('CHECKER_TYPE_CHANGED', { detail: 'some' }));
+        });
+
+        btnEmpty.addEventListener('click', () => {
+            self.dispatchEvent(new CustomEvent('CHECKER_TYPE_CHANGED', { detail: 'empty' }));
+        });
+    }
+
+    onKeyDown(e: KeyboardEvent) {
+        if (e.code === 'Space') {
+            if (this.getAttribute('active-checker') === 'some') {
+                this.dispatchEvent(new CustomEvent('CHECKER_TYPE_CHANGED', { detail: 'empty' }));
+            } else {
+                this.dispatchEvent(new CustomEvent('CHECKER_TYPE_CHANGED', { detail: 'some' }));
+            }
+        }
     }
 
     connectedCallback() {
-        this.draw();
-
         document.addEventListener('mousedown', this.onMouseDown);
+        document.addEventListener('keydown', this.onKeyDown);
     }
 
     disconnectedCallback() {
         document.removeEventListener('mousedown', this.onMouseDown);
+        document.removeEventListener('keydown', this.onKeyDown);
     }
 
-    draw() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-
-    }
-
-    drawLine(ctx: CanvasRenderingContext2D, point1: Point2, point2: Point2) {
-        ctx.beginPath();
-
-        ctx.moveTo(point1.x, point1.y);
-        ctx.lineTo(point2.x, point2.y);
-
-        ctx.lineWidth = 1;
-        ctx.stroke();
-
-        ctx.closePath();
-    }
-
-    drawRectAtCenter(
-        ctx: CanvasRenderingContext2D,
-        { width, height }: { width: number; height: number },
-        { x, y }: Point2,
-    ) {
-        ctx.beginPath();
-
-        const startX = x - width * 0.5;
-        const startY = y - height * 0.5;
-
-        ctx.rect(startX, startY, width, height);
-
-        ctx.lineWidth = 1;
-        ctx.stroke();
-
-        ctx.closePath();
-    }
-
-    drawCircleAtPoint(ctx: CanvasRenderingContext2D, point: Point2, radius, paint?: { color: string }) {
-        ctx.beginPath();
-
-        ctx.arc(point.x, point.y, radius, 0, Math.PI * 2, false);
-
-        // ctx.globalAlpha = 0.75;
-        ctx.fillStyle = paint?.color ?? 'black';
-        ctx.fill();
-
-        ctx.globalAlpha = 1;
-        ctx.closePath();
+    attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+        if (oldValue !== newValue) {
+            if (name === 'active-checker') {
+                const checkerDisplay = this.shadowRoot!.querySelector('.active-checker-display') as HTMLDivElement;
+                const checkerIcon = checkerDisplay.querySelector('.checker-icon') as HTMLSpanElement;
+                checkerIcon.classList.toggle('checker-icon__some', newValue === 'some');
+                checkerIcon.classList.toggle('checker-icon__empty', newValue === 'empty');
+            }
+        }
     }
 }
 
